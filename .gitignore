@@ -1,1 +1,6 @@
-firmware*
+build/
+
+
+# clangd
+.cache/
+compile_commands.json
