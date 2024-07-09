@@ -1,29 +1,34 @@
-// Copyright (c) 2022 Cesanta Software Limited
-// All rights reserved
-
-#include <inttypes.h>
-#include <stdbool.h>
-
 #include "gpio.h"
-
-static inline void spin(volatile uint32_t count) {
-    while (count--)
-        asm("nop");
-}
+#include "systick.h"
+#include "uart.h"
 
 int main(void) {
-    // *(volatile uint32_t *)(0x58000000 + 0x04C) = 2;
-    gpio_turn_on_port(GPIO_PORT_B);
-    // *(volatile uint32_t *)(0x48000400) = 0b11111111111111111111011010111111;
-    // *(volatile uint32_t *)(0x48000400 + 0x18) = 32;
 
+    systick_init_default();
+
+    gpio_turn_on_port(GPIO_PORT_B);
+
+    uart_init(115200);
+
+    gpio_set_mode(PIN_LED_GREEN,
+                  GPIO_MODE_OUTPUT); // Set blue LED to output mode
+    gpio_set_mode(PIN_LED_RED,
+                  GPIO_MODE_OUTPUT); // Set blue LED to output mode
     gpio_set_mode(PIN_LED_BLUE,
                   GPIO_MODE_OUTPUT); // Set blue LED to output mode
+
+    uint32_t timer = 0, period = 500; // Declare timer and 500ms period
+
     for (;;) {
-        gpio_write(PIN_LED_BLUE, HIGH);
-        spin(999999);
-        gpio_write(PIN_LED_BLUE, LOW);
-        spin(999999);
+        if (timer_expired(&timer, period)) {
+            uart_write_buf("hi\r\n", 4);
+            uart_write_buf("hi\r\n", 4);
+            static bool on;
+            gpio_write(PIN_LED_RED, on);
+            gpio_write(PIN_LED_BLUE, !on);
+            gpio_write(PIN_LED_GREEN, on);
+            on = !on;
+        }
     }
     return 0;
 }
@@ -46,4 +51,4 @@ extern void _estack(void); // Defined in link.ld
 
 // 16 standard and 91 STM32-specific handlers
 __attribute__((section(".vectors"))) void (*const tab[16 + 91])(void) = {
-    _estack, _reset};
+    _estack, _reset, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SysTick_Handler};
