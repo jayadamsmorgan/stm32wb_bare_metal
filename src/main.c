@@ -1,8 +1,11 @@
+#include "clock.h"
 #include "gpio.h"
 #include "systick.h"
 #include "uart.h"
 
 int main(void) {
+
+    select_clock_source(HSE);
 
     systick_init_default();
 
@@ -21,8 +24,7 @@ int main(void) {
 
     for (;;) {
         if (timer_expired(&timer, period)) {
-            uart_write_buf("hi\r\n", 4);
-            uart_write_buf("hi\r\n", 4);
+            uart_write_buf("h\r", 2);
             static bool on;
             gpio_write(PIN_LED_RED, on);
             gpio_write(PIN_LED_BLUE, !on);

@@ -1,6 +1,6 @@
 #include "systick.h"
 
-#include "system.h"
+#include "clock.h"
 
 volatile uint32_t s_ticks;
 
@@ -12,7 +12,7 @@ void systick_init(uint32_t ticks) {
     SYSTICK->CTRL = 7UL; // Enable systick
 }
 
-void systick_init_default() { systick_init(FREQ / 1000); }
+void systick_init_default() { systick_init(system_clock_freq / 1000); }
 
 void SysTick_Handler(void) { s_ticks++; }
 

@@ -15,6 +15,7 @@ void uart_init(unsigned long baud);
 int uart_read_ready();
 
 uint8_t uart_read_byte();
+uint8_t uart_read_byte_blocking();
 
 void uart_write_byte(uint8_t byte);
 
