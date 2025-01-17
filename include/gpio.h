@@ -155,7 +155,7 @@ typedef struct {
 
 #define PIN_LED_RED PB1
 #define PIN_LED_GREEN PB0
-#define PIN_LED_BLUE PB5
+#define PIN_LED_BLUE PA4
 
 #define PIN_SW1 PC4
 #define PIN_SW2 PD0

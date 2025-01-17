@@ -8,6 +8,8 @@ SRC_DIR = src
 INC_DIR = include
 BUILD_DIR = build
 
+CC = arm-none-eabi-gcc
+
 SOURCES = $(wildcard $(SRC_DIR)/*.c)
 OBJECTS = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SOURCES))
 HEADERS = $(wildcard $(INC_DIR)/*.h)
@@ -18,16 +20,19 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
-	arm-none-eabi-gcc $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 firmware.elf: $(OBJECTS)
-	arm-none-eabi-gcc $(OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)/$@
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)/$@
 
 $(BUILD_DIR)/firmware.bin: firmware.elf
 	arm-none-eabi-objcopy -O binary $(BUILD_DIR)/firmware.elf $@
 
-flash: $(BUILD_DIR)/firmware.bin
-	sudo /home/linuxbrew/.linuxbrew/bin/st-flash --reset write $< 0x08000000
+stflash: $(BUILD_DIR)/firmware.bin
+	st-flash --reset write $< 0x08000000
+
+dfuflash: $(BUILD_DIR)/firmware.bin
+	dfu-util -D $(BUILD_DIR)/firmware.bin -n 26 -a 0
 
 clean:
 	rm -rf $(BUILD_DIR)/*

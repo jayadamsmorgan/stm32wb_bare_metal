@@ -5,7 +5,7 @@
 
 int main(void) {
 
-    select_clock_source(HSE);
+    select_clock_source(HSI);
 
     systick_init_default();
 
@@ -22,10 +22,11 @@ int main(void) {
 
     uint32_t timer = 0, period = 500; // Declare timer and 500ms period
 
+    bool on = false;
+
     for (;;) {
         if (timer_expired(&timer, period)) {
             uart_write_buf("h\r", 2);
-            static bool on;
             gpio_write(PIN_LED_RED, on);
             gpio_write(PIN_LED_BLUE, !on);
             gpio_write(PIN_LED_GREEN, on);

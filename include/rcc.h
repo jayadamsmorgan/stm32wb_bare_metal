@@ -1,8 +1,6 @@
 #ifndef RCC_H
 #define RCC_H
 
-#include <stdint.h>
-
 // RCC REG START
 //
 #define RCC_REG_ADDR 0x58000000
